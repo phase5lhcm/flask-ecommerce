@@ -1,10 +1,13 @@
-from showroom import db
+from wtforms.validators import Length
+from showroom import db, login_manager
+from showroom import bcrypt
+from flask_login import UserMixin
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(length=30), nullable=False,unique=True)
     email = db.Column(db.String(),nullable=False, unique=True)
@@ -12,28 +15,26 @@ class User(db.Model):
     budget = db.Column(db.Integer(), nullable=False, default=1000) 
     products = db.relationship('Product', backref='owner',lazy=True)
     
-    #    def __repr__(self):
-    #     return f'User: {self.name}'
-    # @property
-    # def refactor_budget(self):
-    #     if len(str(self.budget)) >= 4:
-    #         return f'${str(self.budget)[:-3]},{str(self.budget)[-3:]}'
-    #     else:
-    #         return f"${self.budget}"
+    @property
+    def refactor_budget(self):
+        if len(str(self.budget)) >= 4:
+            return f'${str(self.budget)[:-3]},{str(self.budget)[-3:]}'
+        else:
+            return f"${self.budget}"
         
-    # @property
-    # def password(self):
-    #     return self.password
+    @property
+    def password(self):
+        return self.password
     
-    # @password.setter
-    # def password(self, plain_text_password): 
-    #     #let's override what is stored in password_hash field
-    #      self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
-    #      return True
+    @password.setter
+    def password(self, plain_text_password): 
+        #let's override what is stored in password_hash field
+         self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+         return True
     
-    # def verify_password(self, check_pwrd):
-    #     #check_password_hash returns a bool
-    #     return bcrypt.check_password_hash(self.password_hash, check_pwrd)
+    def verify_password(self, check_pwrd):
+        #check_password_hash returns a bool
+        return bcrypt.check_password_hash(self.password_hash, check_pwrd)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
