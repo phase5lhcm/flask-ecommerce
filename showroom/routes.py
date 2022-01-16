@@ -6,7 +6,7 @@ from showroom.models import Product, User
 from showroom.forms import RegisterForm, LoginForm
 from showroom import db
 from flask_login import login_user, logout_user, login_required
-import sys
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -15,7 +15,7 @@ def home_page():
     return render_template('homepage.html')
 
 @app.route('/showroom')
-# @login_required
+@login_required
 def showroom():
     #let's return all Products in db
     products = Product.query.all()
@@ -32,7 +32,7 @@ def register_page():
         db.session.add(create_user)
         db.session.commit()
         # print(f"user: create_user")
-        # app.logger.info(f'Hello - app.logger.info')
+        # app.logger.info(f'user', create_user)
         login_user(create_user)
         flash(f"Welcome! You are now logged in as {create_user.username}", category="success")
         return redirect(url_for('showroom'))
@@ -70,8 +70,8 @@ def login_page():
     print(form.errors)
     return render_template('loginPage.html', form=form)
     
-# @app.route("/logout", methods=['POST'])
-# def logout_page():
-#     logout_user()
-#     flash("Logout successful", category="info")
-#     return redirect(url_for("home_page"))
+@app.route("/logout")
+def logout_page():
+    logout_user()
+    flash("Logout successful", category="info")
+    return redirect(url_for("home_page"))
