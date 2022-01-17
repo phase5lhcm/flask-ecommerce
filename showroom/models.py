@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(),nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
     budget = db.Column(db.Integer(), nullable=False, default=1000) 
-    products = db.relationship('Product', backref='owner',lazy=True)
+    # products = db.relationship('Product', backref='owner',lazy=True)
     
     @property
     def refactor_budget(self):
