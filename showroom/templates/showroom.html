@@ -16,7 +16,8 @@ content%}
                 </tr>
             </thead>
             <tbody>
-                {% for product in products%}
+                {% for product in products%} {%include
+                'includes/items_modals.html'%}
                 <tr>
                     <td>{{product.id}}</td>
                     <td>{{product.name}}</td>
@@ -24,11 +25,13 @@ content%}
                     <td>{{product.price}}</td>
                     <td>{{product.owner_id}}</td>
                     <td>
-                        <button class="btn btn-outline btn-info">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#exampleModal-{{product.id}}"
+                        >
                             More info
-                        </button>
-                        <button class="btn btn-outline btn-success">
-                            Purchase This item
                         </button>
                     </td>
                 </tr>
