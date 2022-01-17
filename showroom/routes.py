@@ -1,12 +1,12 @@
 from urllib import request
 from showroom import app
-from flask_wtf import Form
-from flask import render_template, redirect, flash,url_for
+from flask import render_template, redirect, flash,url_for, request
 from showroom.models import Product, User
-from showroom.forms import RegisterForm, LoginForm
+from showroom.forms import RegisterForm, LoginForm, PurchaseForm
 from showroom import db
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
+#TODO - add logging info to file when used in production
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -14,13 +14,35 @@ logging.basicConfig(level=logging.DEBUG)
 def home_page():
     return render_template('homepage.html')
 
-@app.route('/showroom')
+@app.route('/showroom', methods=['GET','POST'])
 @login_required
 def showroom():
+    purchase_form = PurchaseForm()
+    if purchase_form.is_submitted():
+        print("form submitted")
+    # request method checks removes resumbit 
+    # form question when refreshing page
+    # if purchase_form.validate_on_submit():
+    if request.method == "POST":
+        purchased_item = request.form.get('purchased_item')
+        app.logger.info(f'purchase form selected', request.form.get('purchased_item'))
+        print(f"form: ", request.form.get('purchased_item'))
+        p_item_obj = Product.query.filter_by(name=purchased_item).first()
+        if p_item_obj:
+            if current_user.can_purchase(p_item_obj):
+                p_item_obj.confirm_purchase(current_user)
+                app.logger.info(f'purchase form selected by: {current_user.username} for {p_item_obj.name} at ${p_item_obj.price} dollars')
+                flash(f"Purchase successful for {p_item_obj.name} at {p_item_obj.price} dollars", category="success")
+            else:
+                flash("Your budget is too low for this item", category="danger")
+        return redirect(url_for('showroom'))
     #let's return all Products in db
-    products = Product.query.all()
-   # print('products', products)
-    return render_template('showroom.html', products=products)
+    # passing owner_id=None ensures that only items that
+    # have not been purchased yet are displayed
+    # in the PRODUCTS AVAILABLE section
+    products = Product.query.filter_by(owner=None)
+    # print('products', products)
+    return render_template('showroom.html', products=products, purchase_form=purchase_form)
 
 @app.route("/register", methods=['GET','POST'])
 def register_page():
@@ -75,3 +97,4 @@ def logout_page():
     logout_user()
     flash("Logout successful", category="info")
     return redirect(url_for("home_page"))
+

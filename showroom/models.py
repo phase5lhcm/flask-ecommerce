@@ -35,6 +35,10 @@ class User(db.Model, UserMixin):
     def verify_password(self, check_pwrd):
         #check_password_hash returns a bool
         return bcrypt.check_password_hash(self.password_hash, check_pwrd)
+    
+    def can_purchase(self, item_obj):
+        return self.budget >= item_obj.price
+
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,3 +51,7 @@ class Product(db.Model):
     def __repr__(self):
         return f'Product {self.name}'
     
+    def confirm_purchase(self, user):
+        self.owned_id = user.id
+        user.budget -= self.price
+        db.session.commit()
