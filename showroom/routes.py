@@ -41,8 +41,10 @@ def showroom():
     # have not been purchased yet are displayed
     # in the PRODUCTS AVAILABLE section
     products = Product.query.filter_by(owner=None)
-    # print('products', products)
-    return render_template('showroom.html', products=products, purchase_form=purchase_form)
+    # print(f"user {current_user.id}")
+    owned_products = Product.query.filter_by(owner=current_user.id)
+    print('products', owned_products)
+    return render_template('showroom.html', products=products, purchase_form=purchase_form, owned_products=owned_products)
 
 @app.route("/register", methods=['GET','POST'])
 def register_page():

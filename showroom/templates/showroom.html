@@ -50,6 +50,11 @@ content%}
     <div class="col-4">
         <h2>Showcase</h2>
         <p>Select each product to begin selling!</p>
+        {% for owned_product in owned_products%}
+        <div class="card" style="width: 10rem; margin: 0 auto">
+            <div class="card-body">{{owned_product.name}}</div>
+        </div>
+        {% endfor%}
     </div>
 </div>
 
