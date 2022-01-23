@@ -1,0 +1,26 @@
+{% extends 'layout.html' %} {% block title%} Login {% endblock%} {%block
+content%}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-signin" style="color: white">
+          {{form.hidden_tag()}}
+            <img src="" alt="" />
+            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+            <br />
+            {{form.email.label()}} {{form.email(class="form-control",
+            placeholder="Email")}} {{form.password.label()}}
+            {{form.password(class="form-control", placeholder="Password")}}
+            <br />
+            <div class="checkbox mb-3">
+                <h6>Can't login?</h6>
+                <a
+                    href="{{url_for('register_page')}}"
+                    class="btn btn-sm btn-secondary"
+                    >Sign Up For an Account</a
+                >
+            </div>
+            {{form.loginBtn(class="btn btn-lg btn-block btn-primary")}}
+        </form>
+    </div>
+</body>
+{%endblock %}

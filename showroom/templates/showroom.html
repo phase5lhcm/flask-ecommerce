@@ -1,0 +1,83 @@
+{% extends 'layout.html' %} {% block title%} Showroom {% endblock%} {%block
+content%}
+<div class="row" style="margin: top 20px; margin-left: 20px">
+    <div class="col-8">
+        <h2>Products Available</h2>
+        <p>Click on a product to purchase</p>
+        <br />
+        <table class="table table-hover table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Bar</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products%} {%include
+                'includes/items_modals.html'%}
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.barcode}}</td>
+                    <td>{{product.price}}</td>
+                    <td>{{product.owner_id}}</td>
+                    <td>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#exampleModal-{{product.id}}"
+                        >
+                            More info
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline btn-success"
+                            data-toggle="modal"
+                            data-target="#purchaseModal-{{product.id}}"
+                        >
+                            Purchase
+                        </button>
+                    </td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4">
+        <h2>Your Showcase</h2>
+        <p>Select each product to begin selling!</p>
+        <br />
+        <div class="row">
+            {% for owned_product in owned_products %} {%include
+            'includes/sell_products_modals.html'%}
+            <div class="col-md-6">
+                <div
+                    class="card text-center bg-light"
+                    style="width: 10rem; margin: 0 auto"
+                >
+                    <div class="card-body">
+                        <button
+                            type="button"
+                            class="btn btn-outline-danger"
+                            data-toggle="modal"
+                            data-target="#sellModal-{{owned_product.id}}"
+                        >
+                            Sell
+                        </button>
+                        <h5 style="color: red">{{owned_product.name}}</h5>
+                        <p style="color: green">
+                            {{owned_product.description}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor%}
+    </div>
+</div>
+
+{%endblock %}
